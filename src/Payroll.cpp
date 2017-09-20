@@ -1,66 +1,77 @@
 #include "Payroll.h"
+#include <iostream>
+#include <iomanip>
 
-const double STANDARD_WEEK_HOURS = 40;
-const double OVER_TIME_MULTIPLIER = 1.5;
-const double SALARY_FREQUENCY = 26;
+using namespace std;
 
-/**
- * Returns over time hours
- *
- * @param totalHours the total hours worked for one week
- * @return over time hours worked in one week
- */
-double getOvertimeHours(double totalHours)
+const double fit_rate = (.15);
+const double ss_rate = (.062);
+const double medicare_rate = (.0145);
+const double ot_multiplier = (1.5);
+const double salary_bi_weekly = (26);
+const double standard_hours = (40);
+
+double get_reg_hours(double total_hours)
 {
-    double hours = 0;
+	double hours = total_hours;
 
-    if(totalHours > STANDARD_WEEK_HOURS)
-    {
-        hours =  totalHours - STANDARD_WEEK_HOURS;
-    }
-
-    return hours;
+	if (total_hours > standard_hours)
+		hours = standard_hours;
+	else if (total_hours < 0)
+		hours = 0;
+	
+	return hours;
 }
 
-/**
- * Returns regular payroll hours
- *
- * @param totalHours total hours worked for one week
- * @return regular payroll hours excluding over time hours
- */
-double getRegularHours(double totalHours)
+double get_ot_hours(double total_hours)
 {
-    double hours = totalHours;
+	double hours = 0;
 
-    if(totalHours > 40)
-        hours = 40;
-    else if(totalHours < 0)
-        hours = 0;
+	if (total_hours > standard_hours)
+		hours = total_hours - standard_hours;
 
-    return hours;
+	return hours;
 }
 
-/**
-  Returns gross pay for an hourly employee
-
-  @param totalHours expects hours greater than 0
-  @param hourlyRate expects a rate greater than 0
- * */
-double getGrossPay(double regularHours, double overtimeHours, double hourlyRate)
+double get_gross_pay(double reg_hours, double ot_hours, double hourly_rate)
 {
-    double grossPay = regularHours * hourlyRate + overtimeHours * hourlyRate * OVER_TIME_MULTIPLIER;
+	double gross_pay = 0;
 
-    return grossPay;
+	gross_pay = reg_hours * hourly_rate;
+	gross_pay += ot_hours * hourly_rate * ot_multiplier;
+
+	return gross_pay;
 }
 
-/**
- * Returns gross salary for a salaried employee for a salary frequency(biweekly)
- *
- * @param salary the yearly salary
- * @return the salary frequence(biweekly) salary
- */
-double getGrossPay(double salary)
+double get_gross_pay(double salary)
 {
-    return salary / SALARY_FREQUENCY;
+	return salary / (salary_bi_weekly);
+}
+
+void show_check_hourly(double gross_pay, double reg_hours, double ot_hours)
+{
+	cout << "\n" << showpoint << fixed << setprecision(2);
+	cout << right << setw(16) << "Regular hours: " << setw(8) << reg_hours << endl;
+	cout << right << setw(16) << "Overtime hours: " << setw(8) << ot_hours << endl;
+	cout << right << setw(16) << "Gross pay: " << setw(8) << gross_pay << endl;
+	cout << right << setw(16) << "FIT: " << setw(8) << (gross_pay * fit_rate) << endl;
+	cout << right << setw(16) << "FICA SSN: " << setw(8) << (gross_pay * ss_rate) << endl;
+	cout << right << setw(16) << "FICA Med: " << setw(8) << (gross_pay * medicare_rate) << endl;
+	cout << right << setw(16) << "Net Pay: " << setw(8) << (gross_pay) - (gross_pay * fit_rate) - (gross_pay * ss_rate) -
+		(gross_pay * medicare_rate) << endl;
+	cout << endl;
+
+}
+
+void show_check_salary(double gross_pay)
+{
+	cout << "\n" << showpoint << fixed << setprecision(2);
+	cout << right << setw(16) << "Gross pay: " << setw(8) << gross_pay << endl;
+	cout << right << setw(16) << "FIT: " << setw(8) << (gross_pay * fit_rate) << endl;
+	cout << right << setw(16) << "FICA SSN: " << setw(8) << (gross_pay * ss_rate) << endl;
+	cout << right << setw(16) << "FICA Med: " << setw(8) << (gross_pay * medicare_rate) << endl;
+	cout << right << setw(16) << "Net Pay: " << setw(8) << (gross_pay)-(gross_pay * fit_rate) - (gross_pay * ss_rate) -
+		(gross_pay * medicare_rate) << endl;
+	cout << endl;
 }
 
